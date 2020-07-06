@@ -2,15 +2,15 @@
 
 Every developer working with compositional data structures (Hello, [Trees](https://en.wikipedia.org/wiki/Tree_(data_structure))!) will eventually come across the **Visitor Pattern**, especially if their data is very heterogeneous (e.g. different types of tree nodes) and needs to work with an open set of operations on these.
 
-In this article I will show what the Visitor Pattern is and how it can help you write robust and *SOLID* code when facing said adversaries.
+In this article I will show what the Visitor Pattern is and how it can help you write robust and [*SOLID*](https://en.wikipedia.org/wiki/SOLID) code when facing said adversaries.
 
-I will exemplify the pattern with the help of a real-world example written in TypeScript. The example will be a simple notebook app. We will start with a naive implementation of base features and see where our code needs improving.
+I will exemplify the pattern with the help of a real-world example written in TypeScript. The example will be a simple notebook app. We will start with a naive implementation of basic features and see where our code needs improving.
 
 Along the way you will learn about the following core concepts of software development in general, and Object-Oriented Programming specifically:
 
 * Compositional data types: trees and nodes
 * KISS principle: Keep It Simple, Stupid!
-* Polymorphism and polymorphous behavior in OOP
+* Polymorphism and polymorphic behavior in OOP
 * SOLID Code I: Single-Responsibility Principle (SRP)
 * SOLID Code II: Open-Closed Principle (OCP)
 * Double Dispatch
@@ -18,7 +18,7 @@ Along the way you will learn about the following core concepts of software devel
 
 
 ## Real-World Problem: Jupyter-Like Notebooks
-Imagine writing a notebook app for your fellow developers. These notebooks are hierarchical in nature: A notebooks contain pages, a page contains cells. A cell is generally any kind of specific content that can be displayed and interacted with on a page, e.g. text, source code, images. 
+Imagine writing a notebook app for your fellow developers. These notebooks are hierarchical in nature: A notebook contains pages, a page contains cells. A cell is generally any kind of specific content that can be displayed and interacted with on a page, e.g. text, source code, images. 
 
 If these features sound familiar, you are absolutely right: We are talking about [Jupyter-style notebooks](https://jupyter.org) here.
 
@@ -26,21 +26,21 @@ Given the key players just mentioned, we can draw a class diagram like the follo
 
 ![](Class_Diagram.png)
 
-As can be seen from the diagram, all players involved here inherit from the base type `Node`, which is the key element of our tree structure. The tree is a compositional data type (every `Node` instance can have multiple child nodes and, hence, a parent node) with heterogeneous data items (nodes of different types). `Node` subtypes are `Notebook`, `Page`, and `Cells`. The latter is abstract and implemented by different content cells, namely `TextCell` (for text), `SourceCodeCell` (representing source code), and `ImageCell` (for images). It is more than likely that others content cells will be added in the future.
+As can be seen from the diagram, all players involved here inherit from the base type `Node`, which is the key element of our tree structure. The tree is a compositional data type (every `Node` instance can have multiple child nodes and, hence, a parent node) with heterogeneous data items (nodes of different types). `Node` subtypes are `Notebook`, `Page`, and `Cell`. The `Cell` type is an abstract type inherited from by different content cells, namely `TextCell` (for text), `SourceCodeCell` (representing source code), and `ImageCell` (for images). It is more than likely that other content cells will be added in the future.
 
-So far, this looks all fine and danndy. Now, imagine your colleagues having already written the entire stack for your notebook application: The backend is running smoothly and the frontend lets your notebooks shine in a modern javascript-based web app. Now comes your part!
+So far, this looks all fine and dandy. Now, imagine your colleagues having already written the entire stack for your notebook application: The backend is running smoothly and the frontend lets your notebooks shine in a modern javascript-based web app. Now comes your part!
 
 
 ## Feature Request: Exporting Notebooks
 
 Your boss enters the stage and asks you to implement a new feature. Users are very happy with the app but feel a bit locked in. They would very much like to be able to export their notebooks to Markdown, XML, and HTML (for starters). Keep in mind that this is a potentially open-ended feature, other formats to export to can be and will be added in the future.
 
-How would you implement this feature?
+So, how would you implement the export feature?
 
 
 ## First Idea: KISS &mdash; Keep It Simple, Stupid!
 
-Let's start exporting our notebooks to HTML. No biggie, you think and get to work. You know about the [**KISS Principle**]() and what it asks you to do now:
+Let's start exporting our notebooks to HTML. No biggie, you think and get to work. You know about the [**KISS Principle**]() and what it requires you to do now:
 
 > **KISS: Keep It Simple, Stupid / Keep It Stupid(ly) Simple** is a design principle in software development (and engineering in general) that favors simple solutions over unnecessarily complex ones. Simplicity is a key design goal that offers great benefits, yet is hard to master.
 
@@ -59,7 +59,7 @@ abstract class Node {
 
 Nice, that surely looks simple!
 
-## Iterate and improve: Make that Polymorphous!
+## Iterate and improve: Make that Polymorphic!
 
 You pause for a second and contemplate your work: This is a good start, but you could potentially improve this a lot by making the method abstract. That way each concrete implementation of `Node` (e.g. `ImageCell`, `TextCell`) can produce a specific HTML output. After all, an `ImageCell` will very likely produce HTML that is markedly different from that of a `TextCell`.
 
@@ -69,7 +69,7 @@ What you are doing here now is thinking in terms of a core concept of **Object-O
 > 
 > For example: If the types `Dog` and `Duck` inherit from a common base class `Mammal` and this class defines a method `makeSound()` (the *single interface* part), then `Dog` would implement it producing a *barking* sound, while `Duck` would implement it making a *quack* sound (the *different forms of behavior* part).
 
-So, you go ahead and make the `exportToHtml()` method abstract and have your different subtypes of `Node`s implement it to suit their needs. Here are two examples:
+So, you go ahead and make the `exportToHtml()` method abstract and have your different `Node` subtypes implement it to their specific needs. Here are two examples:
 
 ```typescript
 class ImageCell extends Cell {
@@ -86,12 +86,12 @@ class TextCell extends Cell {
 
     public exportToHtml(): string
     {
-        return `<p>${this.text}"</p>`;
+        return `<p>${this.text}</p>`;
     }
 }
 ```
 
-You pause again to think: Now that I have added the export functionality for HTML, I just have to add the same logic for the remaining export formats. And again, you would make those new methods abstract and implement them in their specific subtypes. It's quite a lot of typing, and starts to feel a bit verbose, but for now you just plug away...
+You pause again to think: Now that you have added the export functionality for HTML, you just have to add the same logic for the remaining export formats. And again, you would make those new methods abstract and implement them in their specific subtypes. It's quite a lot of typing, and starts to feel a bit verbose, but for now you just plug away...
 
 ```typescript
 export abstract class NodeBase {
@@ -124,7 +124,7 @@ class TextCell extends Cell {
 
     public exportToHtml(): string
     {
-        return `<p>${this.text}"</p>`;
+        return `<p>${this.text}</p>`;
     }
     public exportToXml(): string
     {
@@ -159,7 +159,7 @@ But there is more to it: The entire export logic is distinctly different from wh
 
  The export logic being part of the core `Node` subtypes logic now violates yet another principle: the [**Single-Responsibility Principle**](https://en.wikipedia.org/wiki/Single-responsibility_principle):
 
-> The **Single-Responsibility Principle** (SRP) demands that a class have only a single responsibility. Specifically, this means that a class should have only "one reason to change".
+> The **Single-Responsibility Principle** (SRP) demands that a class have only a single responsibility. Specifically, this means that a class should have only "one reason to change" (Martin, Robert C.: Agile Software Development, Principles, Patterns, and Practices. Prentice Hall. p. 95.).
 > 
 > For example: You are writing an `HTMLExporter` class that exports your entire `Notebook` object to HTML. The feature works well, but after some time a new version of HTML comes along, thus forcing you to update your export logic. So far, so good.
 > 
@@ -278,7 +278,7 @@ class XmlExporter implements NodeExporter
         this.appendXmlLine("</notebook>");
     }
     public exportPage(page: Page) {
-        this.appendXmlLine(`<page title="${page.title}"">`);
+        this.appendXmlLine(`<page title="${page.title}">`);
         
         for(const cell of page.cells)
         {
@@ -310,45 +310,46 @@ We have implemented the two export features in separate classes, keeping perfect
 
 Now we need to find a way to have any concrete `NodeExporter` implementation (e.g. `XmlExporter` and `HtmlExporter`) operate on our class hierarchy. Specifically, we need to loosely couple those implementations to our class hierarchy, so as to follow the OPC.
 
-We could take a `Notebook` instance, traverse its tree structure and feed every node inside of it to the desired `NodeExporter` implementation. As `Notebook` and all types composed therein derive from `Node`, we can just extend its interface as follows:
+We could take a `Notebook` instance, traverse its tree structure and feed every node inside of it to the desired `NodeExporter` implementation. As `Notebook` and all types contained therein derive from `Node`, we can just extend its interface as follows:
 
 ```typescript
 abstract class Node {
     // ...
+
     public abstract export(exporter: NodeExporter): void;
 }
 ```
 
 This way we could feed to any of our `Node` subtypes an instance of any concrete `NodeExporter` implementation, and this in turn would call the proper method on the `NodeExporter` instance passing itself along to it. Such double calling of methods is called [**Double Dispatch**](https://en.wikipedia.org/wiki/Double_dispatch) and has a long history in OOP.
 
-> **Double Dispatch** in OOP is a way of calling a method on an object A and providing it as an argument another object B, which then is called from within A passing itself as an argument to B. This reciprocal dispatching is why the concept bears the name **double**.
+> **Double Dispatch** in OOP is a way of calling a method on an object A and providing it as an argument another object B. The object B then is called from within A passing itself (A) as an argument to B. This reciprocal dispatching is why the concept bears the name **double**.
 > 
-> The logic executed on either side of the target objects (A nd B) depends on their concrete types (polymorphism) and is usually resolved at runtime.
+> The logic executed on either side of the target objects (A and B) depends on their concrete types (polymorphism) is usually resolved at runtime.
 >
 > Double Dispatch lies at the core of the *Visitor Pattern*.
 
-Essentially, such double dispatching makes use of polymorphous behavior &mdash; very much the same way we did in our initial (naive) implementation.
+Essentially, such double dispatching makes use of polymorphic behavior &mdash; very much the same way we did in our initial (naïve) implementation.
 
 Here are a few examples of what our code would look like now with *Double Dispatch* in place:
 
 ```typescript
-class Notebook extends TypedNode<Page> {
+class SourceCodeCell extends Cell { 
     // ...
 
     public export(exporter: NodeExporter) {
-        exporter.exportNotebook(this);
+        exporter.exportSourceCodeCell(this)
     }
 }
 
-class Page extends TypedNode<Cell> {
+class TextCell extends Cell {
     // ...
 
     public export(exporter: NodeExporter) {
-        exporter.exportPage(this);
+        exporter.exportTextCell(this)
     }
 }
 
-export class ImageCell extends Cell {
+class ImageCell extends Cell {
     // ...
 
     public export(exporter: NodeExporter) {
