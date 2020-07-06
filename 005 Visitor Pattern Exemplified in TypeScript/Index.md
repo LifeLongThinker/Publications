@@ -306,7 +306,7 @@ class XmlExporter implements NodeExporter
 We have implemented the two export features in separate classes, keeping perfectly in line with the SRP. Now how can we plug our classes into our existing class hierarchy?
 
 
-## Step 2: Do Call Us &mdash; And We'll Call You: Double Dispatch
+## Second Step: Do Call Us &mdash; And We'll Call You: Double Dispatch
 
 Now we need to find a way to have any concrete `NodeExporter` implementation (e.g. `XmlExporter` and `HtmlExporter`) operate on our class hierarchy. Specifically, we need to loosely couple those implementations to our class hierarchy, so as to follow the OPC.
 
