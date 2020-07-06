@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<minutes  
+    title="Monthly Committee Meeting"
+    subtitle="Meeting #3: March 2020"
+    signature="M2020.3"
+    date="05/25/2020"
+    time="7:30 p.m."
+    duration="2 hours 30 minutes"
+    venue="Town Association Hall"
+    chairman="AA"
+    keeper="BB" 
+    next-meeting="Monday, July 6, 7:30 p.m."
+    version="1" 
+    versiondate="06/03/2020"
+    >
+
+    <members>
+        <member name="Andrea Awesome"           signature="AA" />
+        <member name="Bart Bully"               signature="BB" />
+        <member name="Camilla Conundrum"        signature="CC" />
+        <member name="Jeff Jerk"                signature="JJ" />
+        <member name="Luisa Lemon"              signature="LL" absent="true" />
+        <member name="Monica Moody"             signature="MM" absent="true" />
+        <member name="Penny Penniless"          signature="PP" />
+        <!-- ... -->
+    </members>
+
+    <guests>
+        <guest name="Isabel Ingenious"          signature="II" />
+        <!-- ... -->
+    </guests>
+
+    <agenda>
+        <!-- ACTION TYPES
+        <info></info>
+        <task responsible="CC" deadline="12/10"></task>
+        <decision></decision>
+        -->
+        <item title="Review of last year's budget report">
+            <info>Our treasurer JJ has laid forth his annual budget report (see attachment A1)...</info>
+            <vote>The committee has reviewed the report and unanimously decided...</vote>
+            <statement>The committee points out that...</statement>
+            <task responsible="MM" deadline="06/30">The budget report will be sent to print immediately by MM and handed out to the members of our association no later than...</task>
+        </item>
+        <!-- ... -->
+    </agenda>
+
+    <attachments>
+        <attachment signature="A1" title="Budget Report of 2019 by JJ" />
+        <!-- ... -->
+    </attachments>
+
+    <signatures>
+        <signature role="President" name="Andrea Awesome" />
+        <signature role="Treasurer" name="Camilla Conundrum" />
+        <signature role="Secretary" name="Bart Bully" />
+    </signatures>
+</minutes>
